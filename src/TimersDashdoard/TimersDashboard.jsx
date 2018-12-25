@@ -2,12 +2,32 @@ import React, {Component} from 'react'
 import  helpers from '../helper'
 
 class TimersDashboard extends React.Component {
+
+  state = {
+       timers: [
+         {
+          title: 'Pratice squat',
+          project: 'Gym Chores',
+          id: 0,
+          elapsed: 54455,
+          runningSince: Date.now()
+        },
+        {
+          title: 'Pratice squat',
+          project: 'Gym Chores',
+          id: 1,
+          elapsed: 45544,
+          runningSince: Date.now()
+        },
+       ],
+  };
+
     render(){
         return (
           <div className='ui three column centered grid'>
             <div className='column'>
-            <EditableTimerList />
-            <ToggleableTimerForm  isOpen={true} />
+            <EditableTimerList timers = {this.state.timers}/>
+            <ToggleableTimerForm  isOpen={false} />
             </div>
           </div>  
         );
@@ -19,32 +39,36 @@ export default TimersDashboard;
 
 class EditableTimerList extends React.Component {
     render(){
+
+      const timers = this.props.timers.map((timer) => (
+        < EditableTimer 
+           key = {timer.id}
+           title = {timer.title}
+           project = {timer.project}
+           elapsed = {timer.elapsed}
+           runningSince = {timer.runningSince}
+        />
+      ));
+
         return (
-          <div id='timers'>
-            <EditableTimer
-              title='Learn React'
-              project='Web Domination'
-              elapsed='8986300'
-              runningSince={null}
-              editFormOpen={false}
-            />
-            <EditableTimer
-              title='Learn extreme ironing'
-              project='World Domination'
-              elapsed='3890985'
-              runningSince={null}
-              editFormOpen={true}
-            />
-          </div>
+           <div id = 'timers'>
+              {timers}
+           </div>
           );
     }
 }
 
 class EditableTimer extends React.Component {
+  state = {
+    editFormOpen: true
+  };
+
   render(){
-    if (this.props.editFormOpen) {
+
+    if (this.state.editFormOpen) {
       return (
         <TimerForm
+          id = {this.props.id}
           title={this.props.title}
           project={this.props.project}
         />
@@ -52,6 +76,7 @@ class EditableTimer extends React.Component {
     } else {
       return (
         <Timer
+          id = {this.props.id}
           title={this.props.title}
           project={this.props.project}
           elapsed={this.props.elapsed}
@@ -93,7 +118,16 @@ class TimerForm  extends Component {
 }
  
 class ToggleableTimerForm  extends Component {
-  render() { 
+  state = {
+     isOpen: true
+  };
+
+  handleFormOpen = () =>  {
+    console.log(" --- wow " +this.state.isOpen);
+    this.setState({isOpen: true});
+  }
+
+  render() {  
     if (this.props.isOpen) {
       return (
         <TimerForm />
@@ -101,7 +135,8 @@ class ToggleableTimerForm  extends Component {
     } else {
       return (
         <div className='ui basic content center aligned segment'>
-          <button className='ui basic button icon'>
+          <button onClick= {this.handleFormOpen}
+            className='ui basic button icon'>
             <i className='plus icon'></i>
           </button>
         </div>
@@ -113,7 +148,7 @@ class ToggleableTimerForm  extends Component {
 class Timer  extends Component {
  
   render() { 
-    const elapsedString = helpers.renderElapsedString(this.props.elapsed);
+    const elapsedString = helpers.renderElapsedString(this.props.elapsed, this.props.runningSince);
     return (
       <div className='ui centered card'>
         <div className='content'>

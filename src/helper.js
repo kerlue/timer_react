@@ -26,6 +26,7 @@ const helpers = (function () {
     if (runningSince) {
       totalElapsed += Date.now() - runningSince;
     }
+    
     return millisecondsToHuman(totalElapsed);
   }
 
